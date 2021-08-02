@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-e864527a"],{"097a":function(e,n,t){},"099a":function(e,n,t){"use strict";var a=t("097a"),o=t.n(a);o.a},bb51:function(e,n,t){"use strict";t.r(n);var a=function(){var e=this,n=e.$createElement,t=e._self._c||n;return t("h2",[e._v("分类")])},o=[],u={name:"Category"},c=u,r=(t("099a"),t("2877")),i=Object(r["a"])(c,a,o,!1,null,"8e80b0f4",null);i.options.__file="Category.vue";n["default"]=i.exports}}]);
+//# sourceMappingURL=chunk-e864527a.14f7dd50.js.map
