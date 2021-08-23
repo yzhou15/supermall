@@ -4,7 +4,7 @@
       <div slot="center">购物街</div>
     </nav-bar>
 
-    <scroll class="content" ref="scroll">
+    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <home-swiper :banners="banners" />
       <home-recommend-view :recommends="recommends" />
       <feature-view />
@@ -16,7 +16,7 @@
       <goods-list :goods="showGoods" />
     </scroll>
 
-    <back-top @click.native="backClick"/>
+    <back-top @click.native="backClick" v-show="isShowBackTop"/>
   </div>
 </template>
 
@@ -55,6 +55,7 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: "pop",
+      isShowBackTop: false
     };
   },
   computed: {
@@ -89,7 +90,11 @@ export default {
       }
     },
     backClick() {
-      this.$ref.scroll.scroll.scrollTO(0, 0)
+      this.$refs.scroll.scrollTo(0, 0)
+    },
+    contentScroll(position){
+      // console.log(position);
+      this.isShowBackTop = (-position.y) > 1000
     },
     /**
      *网络请求相关的方法
@@ -147,9 +152,8 @@ export default {
 }
 
 /* .content {
-  color: yellowgreen;
   height: calc(100% - 93px);
   overflow: hidden;
-  margin-top: 51px;
+  margin-top: 44px;
 } */
 </style>
