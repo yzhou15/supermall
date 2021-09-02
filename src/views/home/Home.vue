@@ -4,7 +4,7 @@
       <div slot="center">购物街</div>
     </nav-bar>
 
-    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll" :pull-up-load="true" @pullingup="loadMore">
+    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll" :pull-up-load="true" @pulling-up="loadMore">
       <home-swiper :banners="banners" />
       <home-recommend-view :recommends="recommends" />
       <feature-view />
@@ -74,15 +74,25 @@ export default {
   },
   mounted() {
     // 3. 监听item中图片加载完成
+    const refresh = this.debounce(this.$refs.scroll.refresh, 50)
     this.$bus.$on('itemImageLoad', () => {
-      // console.log('------');
-      this.$refs.scroll.refresh()
+      // this.$refs.scroll.refresh()
+      refresh()
     })
   },
   methods: {
     /**
      * 事件监听相关的方法
      */
+    debounce(func, delay) {
+      let timer = null
+      return function (...args) {
+        if (timer) clearTimeout(timer)
+        timer = setTimeout(() => {
+          func.apply(this.args)
+        }, delay)
+      }
+    },
     tabClick(index) {
       switch (index) {
         case 0:
