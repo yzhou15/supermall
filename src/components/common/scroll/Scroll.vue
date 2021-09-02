@@ -39,6 +39,8 @@
       this.scroll.on('scroll', (position) => {
         // console.log(position);
         this.$emit('scroll', position)
+        // console.log(this.scroll);
+        this.scroll.refresh
       })
 
       // 3.监听上拉事件

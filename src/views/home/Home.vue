@@ -65,18 +65,18 @@ export default {
   },
   created() {
     // 1. 请求多个数据
-    this.getHomeMultidata();
+    this.getHomeMultidata()
 
     // 2. 请求商品数据
-    this.getHomeGoods("pop");
-    this.getHomeGoods("new");
-    this.getHomeGoods("sell");
+    this.getHomeGoods("pop")
+    this.getHomeGoods("new")
+    this.getHomeGoods("sell")
   },
   mounted() {
     // 3. 监听item中图片加载完成
     this.$bus.$on('itemImageLoad', () => {
+      // console.log('------');
       this.$refs.scroll.refresh()
-      console.log('------');
     })
   },
   methods: {
@@ -119,10 +119,10 @@ export default {
       });
     },
     getHomeGoods(type) {
-      const page = this.goods[type].page + 1;
+      const page = this.goods[type].page + 1
       getHomeGoods(type, page).then((res) => {
-        this.goods[type].list.push(...res.data.list);
-        this.goods[type].page += 1;
+        this.goods[type].list.push(...res.data.list)
+        this.goods[type].page += 1
 
         this.$ref.scroll.finishPullUp()
       });
