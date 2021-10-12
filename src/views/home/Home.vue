@@ -63,13 +63,27 @@ export default {
       currentType: "pop",
       isShowBackTop: false,
       tabOffsetTop: 0,
-      isTabFixed: false
+      isTabFixed: false,
+      saveY: 0
     };
   },
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
     },
+  },
+  destroyed () {
+    console.log('home destroyed');
+  },
+  activated () {
+    // console.log('activated');
+    this.$refs.scroll.scrollTo(0, this.saveY, 0)
+    this.$refs.scroll.refresh()
+  },
+  deactivated(){
+    // console.log('deactivated');
+    this.saveY = this.$refs.scroll.getScrollY
+    console.log('this.saveY');
   },
   created() {
     // 1. 请求多个数据
