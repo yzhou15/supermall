@@ -10,7 +10,14 @@
       ref="tabControl1"
       v-show="isTabFixed"
     />
-    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll" :pull-up-load="true" @pulling-up="loadMore">
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+      :pull-up-load="true"
+      @pulling-up="loadMore"
+    >
       <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad" />
       <home-recommend-view :recommends="recommends" />
       <feature-view />
@@ -22,7 +29,7 @@
       <goods-list :goods="showGoods" />
     </scroll>
 
-    <back-top @click.native="backClick" v-show="isShowBackTop"/>
+    <back-top @click.native="backClick" v-show="isShowBackTop" />
   </div>
 </template>
 
@@ -38,6 +45,7 @@ import Scroll from "components/common/scroll/Scroll";
 import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "@/network/home";
+import { debounce } from "@/common/utils";
 
 export default {
   name: "Home",
@@ -64,7 +72,7 @@ export default {
       isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
-      saveY: 0
+      saveY: 0,
     };
   },
   computed: {
@@ -72,48 +80,49 @@ export default {
       return this.goods[this.currentType].list;
     },
   },
-  destroyed () {
-    console.log('home destroyed');
+  destroyed() {
+    console.log("home destroyed");
   },
-  activated () {
+  activated() {
     // console.log('activated');
-    this.$refs.scroll.scrollTo(0, this.saveY, 0)
-    this.$refs.scroll.refresh()
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+    this.$refs.scroll.refresh();
   },
-  deactivated(){
+  deactivated() {
     // console.log('deactivated');
-    this.saveY = this.$refs.scroll.getScrollY
-    console.log('this.saveY');
+    this.saveY = this.$refs.scroll.getScrollY;
+    console.log("this.saveY");
   },
   created() {
     // 1. 请求多个数据
-    this.getHomeMultidata()
+    this.getHomeMultidata();
 
     // 2. 请求商品数据
-    this.getHomeGoods("pop")
-    this.getHomeGoods("new")
-    this.getHomeGoods("sell")
+    this.getHomeGoods("pop");
+    this.getHomeGoods("new");
+    this.getHomeGoods("sell");
   },
   mounted() {
     // 3. 监听item中图片加载完成
-    const refresh = this.debounce(this.$refs.scroll.refresh, 50)
-    this.$bus.$on('itemImageLoad', () => {
+    // const refresh = this.debounce(this.$refs.scroll.refresh, 50)
+    const refresh = debounce(this.$refs.scroll.refresh, 50);
+    this.$bus.$on("itemImageLoad", () => {
       // this.$refs.scroll.refresh()
-      refresh()
-    })
+      refresh();
+    });
   },
   methods: {
     /**
      * 事件监听相关的方法
      */
     debounce(func, delay) {
-      let timer = null
+      let timer = null;
       return function (...args) {
-        if (timer) clearTimeout(timer)
+        if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
-          func.apply(this.args)
-        }, delay)
-      }
+          func.apply(this.args);
+        }, delay);
+      };
     },
     tabClick(index) {
       switch (index) {
@@ -131,19 +140,19 @@ export default {
       this.$refs.tabControl2.currentIndex = index;
     },
     backClick() {
-      this.$refs.scroll.scrollTo(0, 0)
+      this.$refs.scroll.scrollTo(0, 0);
     },
-    contentScroll(position){
+    contentScroll(position) {
       // 1. 判断BackTop是否显示
-      this.isShowBackTop = (-position.y) > 1000
+      this.isShowBackTop = -position.y > 1000;
 
       // 2. 决定tabControl是否吸顶(position: fixed)
-      this.isTabFixed = (-position.y) > this.tabOffsetTop
+      this.isTabFixed = -position.y > this.tabOffsetTop;
     },
-    loadMore(){
-      this.getHomeGoods(this.currentType)
+    loadMore() {
+      this.getHomeGoods(this.currentType);
 
-      this.$refs.scroll.scroll.refresh()
+      this.$refs.scroll.scroll.refresh();
     },
     swiperImageLoad() {
       this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
@@ -159,12 +168,13 @@ export default {
       });
     },
     getHomeGoods(type) {
-      const page = this.goods[type].page + 1
+      const page = this.goods[type].page + 1;
       getHomeGoods(type, page).then((res) => {
-        this.goods[type].list.push(...res.data.list)
-        this.goods[type].page += 1
+        this.goods[type].list.push(...res.data.list);
+        this.goods[type].page += 1;
 
-        this.$ref.scroll.finishPullUp()
+        // 完成上拉加载更多
+        this.$ref.scroll.finishPullUp();
       });
     },
   },
